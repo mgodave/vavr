@@ -55,13 +55,9 @@ import java.util.function.Supplier;
  * @param <R> The type of the Right value of an Either.
  */
 @SuppressWarnings("deprecation")
-public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Serializable {
+public sealed interface Either<L, R> extends Iterable<R>, io.vavr.Value<R>, Serializable {
 
-    private static final long serialVersionUID = 1L;
-
-    // sealed
-    private Either() {
-    }
+    long serialVersionUID = 1L;
 
     /**
      * Constructs a {@link Right}
@@ -76,7 +72,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * @param <R>   Type of right value.
      * @return A new {@code Right} instance.
      */
-    public static <L, R> Either<L, R> right(R right) {
+    static <L, R> Either<L, R> right(R right) {
         return new Right<>(right);
     }
 
@@ -93,7 +89,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * @param <R>  Type of right value.
      * @return A new {@code Left} instance.
      */
-    public static <L, R> Either<L, R> left(L left) {
+    static <L, R> Either<L, R> left(L left) {
         return new Left<>(left);
     }
 
@@ -116,7 +112,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * @return the given {@code either} instance as narrowed type {@code Either<L, R>}.
      */
     @SuppressWarnings("unchecked")
-    public static <L, R> Either<L, R> narrow(Either<? extends L, ? extends R> either) {
+    static <L, R> Either<L, R> narrow(Either<? extends L, ? extends R> either) {
         return (Either<L, R>) either;
     }
 
@@ -134,7 +130,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * @return The left value.
      * @throws NoSuchElementException if this is a {@code Right}.
      */
-    public abstract L getLeft();
+    L getLeft();
 
     /**
      * Returns whether this Either is a Left.
@@ -149,7 +145,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      *
      * @return true, if this is a Left, false otherwise
      */
-    public abstract boolean isLeft();
+    boolean isLeft();
 
     /**
      * Returns whether this Either is a Right.
@@ -164,7 +160,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      *
      * @return true, if this is a Right, false otherwise
      */
-    public abstract boolean isRight();
+    boolean isRight();
 
     /**
      * Returns a LeftProjection of this Either.
@@ -173,7 +169,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * @deprecated Either is right-biased. Use {@link #swap()} instead of projections.
      */
     @Deprecated
-    public final LeftProjection<L, R> left() {
+    default LeftProjection<L, R> left() {
         return new LeftProjection<>(this);
     }
 
@@ -184,7 +180,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * @deprecated Either is right-biased. Use {@link #swap()} instead of projections.
      */
     @Deprecated
-    public final RightProjection<L, R> right() {
+    default RightProjection<L, R> right() {
         return new RightProjection<>(this);
     }
 
@@ -209,7 +205,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * @param <Y>         The new right type of the resulting Either
      * @return A new Either instance
      */
-    public final <X, Y> Either<X, Y> bimap(Function<? super L, ? extends X> leftMapper, Function<? super R, ? extends Y> rightMapper) {
+    default  <X, Y> Either<X, Y> bimap(Function<? super L, ? extends X> leftMapper, Function<? super R, ? extends Y> rightMapper) {
         Objects.requireNonNull(leftMapper, "leftMapper is null");
         Objects.requireNonNull(rightMapper, "rightMapper is null");
         if (isRight()) {
@@ -239,7 +235,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * @param <U>         type of the folded value
      * @return A value of type U
      */
-    public final <U> U fold(Function<? super L, ? extends U> leftMapper, Function<? super R, ? extends U> rightMapper) {
+    default <U> U fold(Function<? super L, ? extends U> leftMapper, Function<? super R, ? extends U> rightMapper) {
         Objects.requireNonNull(leftMapper, "leftMapper is null");
         Objects.requireNonNull(rightMapper, "rightMapper is null");
         if (isRight()) {
@@ -277,7 +273,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * @throws NullPointerException if {@code eithers} is null
      */
     @SuppressWarnings("unchecked")
-    public static <L,R> Either<Seq<L>, Seq<R>> sequence(Iterable<? extends Either<? extends L, ? extends R>> eithers) {
+    static <L,R> Either<Seq<L>, Seq<R>> sequence(Iterable<? extends Either<? extends L, ? extends R>> eithers) {
         Objects.requireNonNull(eithers, "eithers is null");
         return Iterator.ofAll((Iterable<Either<L, R>>) eithers)
                 .partition(Either::isLeft)
@@ -311,7 +307,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * @return A {@code Either} of a {@link Seq} of results.
      * @throws NullPointerException if values or f is null.
      */
-    public static <L, R, T> Either<Seq<L>, Seq<R>> traverse(Iterable<? extends T> values, Function<? super T, ? extends Either<? extends L, ? extends R>> mapper) {
+    static <L, R, T> Either<Seq<L>, Seq<R>> traverse(Iterable<? extends T> values, Function<? super T, ? extends Either<? extends L, ? extends R>> mapper) {
         Objects.requireNonNull(values, "values is null");
         Objects.requireNonNull(mapper, "mapper is null");
         return sequence(Iterator.ofAll(values).map(mapper));
@@ -344,7 +340,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * @return An {@code Either} of either a {@link Seq} of right values or the first left value, if present.
      * @throws NullPointerException if {@code eithers} is null
      */
-    public static <L,R> Either<L, Seq<R>> sequenceRight(Iterable<? extends Either<? extends L, ? extends R>> eithers) {
+    static <L,R> Either<L, Seq<R>> sequenceRight(Iterable<? extends Either<? extends L, ? extends R>> eithers) {
         Objects.requireNonNull(eithers, "eithers is null");
         Vector<R> rightValues = Vector.empty();
         for (Either<? extends L, ? extends R> either : eithers) {
@@ -378,7 +374,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * @return A {@code Either} of a {@link Seq} of results.
      * @throws NullPointerException if values or f is null.
      */
-    public static <L, R, T> Either<L, Seq<R>> traverseRight(Iterable<? extends T> values, Function<? super T, ? extends Either<? extends L, ? extends R>> mapper) {
+    static <L, R, T> Either<L, Seq<R>> traverseRight(Iterable<? extends T> values, Function<? super T, ? extends Either<? extends L, ? extends R>> mapper) {
         Objects.requireNonNull(values, "values is null");
         Objects.requireNonNull(mapper, "mapper is null");
         return sequenceRight(Iterator.ofAll(values).map(mapper));
@@ -397,7 +393,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * @return An instance of type {@code U}
      * @throws NullPointerException if {@code f} is null
      */
-    public final <U> U transform(Function<? super Either<L, R>, ? extends U> f) {
+    default  <U> U transform(Function<? super Either<L, R>, ? extends U> f) {
         Objects.requireNonNull(f, "f is null");
         return f.apply(this);
     }
@@ -417,7 +413,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * @return the right value, if the underlying Either is a Right or else the alternative Right value provided by
      * {@code other} by applying the Left value.
      */
-    public final R getOrElseGet(Function<? super L, ? extends R> other) {
+    default R getOrElseGet(Function<? super L, ? extends R> other) {
         Objects.requireNonNull(other, "other is null");
         if (isRight()) {
             return get();
@@ -436,7 +432,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      *
      * @param action an action which consumes a Left value
      */
-    public final void orElseRun(Consumer<? super L> action) {
+    default void orElseRun(Consumer<? super L> action) {
         Objects.requireNonNull(action, "action is null");
         if (isLeft()) {
             action.accept(getLeft());
@@ -461,7 +457,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * {@code exceptionFunction} by applying the Left value.
      * @throws X if the projected Either is a Left
      */
-    public final <X extends Throwable> R getOrElseThrow(Function<? super L, X> exceptionFunction) throws X {
+    default <X extends Throwable> R getOrElseThrow(Function<? super L, X> exceptionFunction) throws X {
         Objects.requireNonNull(exceptionFunction, "exceptionFunction is null");
         if (isRight()) {
             return get();
@@ -483,7 +479,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      *
      * @return a new {@code Either}
      */
-    public final Either<R, L> swap() {
+    default Either<R, L> swap() {
         if (isRight()) {
             return new Left<>(get());
         } else {
@@ -509,7 +505,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * @throws NullPointerException if the given {@code recoveryFunction} is null
      */
     @SuppressWarnings("unchecked")
-    public final Either<L, R> recoverWith(Function<? super L, ? extends Either<? extends L, ? extends R>> recoveryFunction) {
+    default Either<L, R> recoverWith(Function<? super L, ? extends Either<? extends L, ? extends R>> recoveryFunction) {
         Objects.requireNonNull(recoveryFunction, "recoveryFunction is null");
         if (isLeft()) {
             return (Either<L, R>) recoveryFunction.apply(getLeft());
@@ -535,7 +531,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * @return an {@code Either<L, R>} instance
      * @throws NullPointerException if the given {@code recoveryFunction} is null
      */
-    public final Either<L, R> recover(Function<? super L, ? extends R> recoveryFunction) {
+    default Either<L, R> recover(Function<? super L, ? extends R> recoveryFunction) {
         Objects.requireNonNull(recoveryFunction, "recoveryFunction is null");
         if (isLeft()) {
             return Either.right(recoveryFunction.apply(getLeft()));
@@ -563,7 +559,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * @throws NullPointerException if {@code mapper} is null
      */
     @SuppressWarnings("unchecked")
-    public final <U> Either<L, U> flatMap(Function<? super R, ? extends Either<L, ? extends U>> mapper) {
+    default <U> Either<L, U> flatMap(Function<? super R, ? extends Either<L, ? extends U>> mapper) {
         Objects.requireNonNull(mapper, "mapper is null");
         if (isRight()) {
             return (Either<L, U>) mapper.apply(get());
@@ -590,7 +586,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      */
     @SuppressWarnings("unchecked")
     @Override
-    public final <U> Either<L, U> map(Function<? super R, ? extends U> mapper) {
+    default <U> Either<L, U> map(Function<? super R, ? extends U> mapper) {
         Objects.requireNonNull(mapper, "mapper is null");
         if (isRight()) {
             return Either.right(mapper.apply(get()));
@@ -616,7 +612,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * @throws NullPointerException if {@code mapper} is null
      */
     @SuppressWarnings("unchecked")
-    public final <U> Either<U, R> mapLeft(Function<? super L, ? extends U> leftMapper) {
+    default <U> Either<U, R> mapLeft(Function<? super L, ? extends U> leftMapper) {
         Objects.requireNonNull(leftMapper, "leftMapper is null");
         if (isLeft()) {
             return Either.left(leftMapper.apply(getLeft()));
@@ -635,7 +631,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * @return a new {@code Option} instance
      * @throws NullPointerException if {@code predicate} is null
      */
-    public final Option<Either<L, R>> filter(Predicate<? super R> predicate) {
+    default Option<Either<L, R>> filter(Predicate<? super R> predicate) {
         Objects.requireNonNull(predicate, "predicate is null");
         return isLeft() || predicate.test(get()) ? Option.some(this) : Option.none();
     }
@@ -648,7 +644,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * @throws NullPointerException if {@code predicate} is null
      *
      */
-    public final Option<Either<L, R>> filterNot(Predicate<? super R> predicate) {
+    default Option<Either<L, R>> filterNot(Predicate<? super R> predicate) {
         Objects.requireNonNull(predicate, "predicate is null");
         return filter(predicate.negate());
     }
@@ -672,7 +668,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * @return an {@code Either} instance
      * @throws NullPointerException if {@code predicate} is null
      */
-    public final Either<L,R> filterOrElse(Predicate<? super R> predicate, Function<? super R, ? extends L> zero) {
+    default Either<L,R> filterOrElse(Predicate<? super R> predicate, Function<? super R, ? extends L> zero) {
         Objects.requireNonNull(predicate, "predicate is null");
         Objects.requireNonNull(zero, "zero is null");
         if (isLeft() || predicate.test(get())) {
@@ -689,21 +685,21 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * @throws NoSuchElementException if this is a {@code Left}.
      */
     @Override
-    public abstract R get();
+    R get();
 
     @Override
-    public final boolean isEmpty() {
+    default boolean isEmpty() {
         return isLeft();
     }
 
     @SuppressWarnings("unchecked")
-    public final Either<L, R> orElse(Either<? extends L, ? extends R> other) {
+    default Either<L, R> orElse(Either<? extends L, ? extends R> other) {
         Objects.requireNonNull(other, "other is null");
         return isRight() ? this : (Either<L, R>) other;
     }
 
     @SuppressWarnings("unchecked")
-    public final Either<L, R> orElse(Supplier<? extends Either<? extends L, ? extends R>> supplier) {
+    default Either<L, R> orElse(Supplier<? extends Either<? extends L, ? extends R>> supplier) {
         Objects.requireNonNull(supplier, "supplier is null");
         return isRight() ? this : (Either<L, R>) supplier.get();
     }
@@ -714,7 +710,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * @return false
      */
     @Override
-    public final boolean isAsync() {
+    default boolean isAsync() {
         return false;
     }
 
@@ -724,7 +720,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * @return false
      */
     @Override
-    public final boolean isLazy() {
+    default boolean isLazy() {
         return false;
     }
 
@@ -734,12 +730,12 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * @return {@code true}
      */
     @Override
-    public final boolean isSingleValued() {
+    default boolean isSingleValued() {
         return true;
     }
 
     @Override
-    public final Iterator<R> iterator() {
+    default Iterator<R> iterator() {
         if (isRight()) {
             return Iterator.of(get());
         } else {
@@ -755,7 +751,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      * @param rightAction The action that will be performed on the right element
      * @return this instance
      */
-    public final Either<L, R> peek(Consumer<? super L> leftAction, Consumer<? super R> rightAction) {
+    default Either<L, R> peek(Consumer<? super L> leftAction, Consumer<? super R> rightAction) {
         Objects.requireNonNull(leftAction, "leftAction is null");
         Objects.requireNonNull(rightAction, "rightAction is null");
 
@@ -769,7 +765,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
     }
 
     @Override
-    public final Either<L, R> peek(Consumer<? super R> action) {
+    default Either<L, R> peek(Consumer<? super R> action) {
         Objects.requireNonNull(action, "action is null");
         if (isRight()) {
             action.accept(get());
@@ -777,7 +773,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
         return this;
     }
 
-    public final Either<L, R> peekLeft(Consumer<? super L> action) {
+    default Either<L, R> peekLeft(Consumer<? super L> action) {
         Objects.requireNonNull(action, "action is null");
         if (isLeft()) {
             action.accept(getLeft());
@@ -790,7 +786,7 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      *
      * @return {@code Validation.valid(get())} if this is right, otherwise {@code Validation.invalid(getLeft())}.
      */
-    public final Validation<L, R> toValidation() {
+    default Validation<L, R> toValidation() {
         return isRight() ? Validation.valid(get()) : Validation.invalid(getLeft());
     }
 
@@ -801,10 +797,8 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      *
      * @param <L> The type of the Left value of an Either.
      * @param <R> The type of the Right value of an Either.
-     * @deprecated Either is right-biased. Use {@link #swap()} instead of projections.
      */
-    @Deprecated
-    public static final class LeftProjection<L, R> implements io.vavr.Value<L> {
+    final class LeftProjection<L, R> implements io.vavr.Value<L> {
 
         private final Either<L, R> either;
 
@@ -1056,10 +1050,8 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      *
      * @param <L> The type of the Left value of an Either.
      * @param <R> The type of the Right value of an Either.
-     * @deprecated Either is right-biased. Use {@link #swap()} instead of projections.
      */
-    @Deprecated
-    public static final class RightProjection<L, R> implements io.vavr.Value<R> {
+    final class RightProjection<L, R> implements io.vavr.Value<R> {
 
         private final Either<L, R> either;
 
@@ -1320,23 +1312,10 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      *
      * @param <L> left component type
      * @param <R> right component type
-     * @deprecated will be removed from the public API
      */
-    @Deprecated
-    public static final class Left<L, R> extends Either<L, R> implements Serializable {
+    record Left<L, R>(L value) implements Either<L, R>, Serializable {
 
         private static final long serialVersionUID = 1L;
-
-        private final L value;
-
-        /**
-         * Constructs a {@code Left}.
-         *
-         * @param value a left value
-         */
-        private Left(L value) {
-            this.value = value;
-        }
 
         @Override
         public R get() {
@@ -1384,23 +1363,10 @@ public abstract class Either<L, R> implements Iterable<R>, io.vavr.Value<R>, Ser
      *
      * @param <L> left component type
      * @param <R> right component type
-     * @deprecated will be removed from the public API
      */
-    @Deprecated
-    public static final class Right<L, R> extends Either<L, R> implements Serializable {
+    record Right<L, R>(R value) implements Either<L, R>, Serializable {
 
         private static final long serialVersionUID = 1L;
-
-        private final R value;
-
-        /**
-         * Constructs a {@code Right}.
-         *
-         * @param value a right value
-         */
-        private Right(R value) {
-            this.value = value;
-        }
 
         @Override
         public R get() {
