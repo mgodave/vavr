@@ -74,17 +74,16 @@ public class Euler38Test {
 
     private static boolean isPandigitalMultiple(CharSeq pandigital) {
         return List.rangeClosed(1, pandigital.length() - 1)
-                .exists(i -> isPandigitalMultipleRest(pandigital.drop(i), Integer.valueOf(pandigital.take(i).mkString()), 2));
+                .exists(i -> isPandigitalMultipleRest(pandigital.drop(i), Integer.parseInt(pandigital.take(i).mkString()), 2));
     }
 
     private static boolean isPandigitalMultipleRest(CharSeq pandigitalRest, int multiplicand, int multiplicator) {
-        return Match(pandigitalRest.length()).of(
-                Case($(0), true),
-                Case($(), length -> List.rangeClosed(1, length)
-                        .find(i -> Integer.valueOf(pandigitalRest.take(i).mkString()) == multiplicand * multiplicator)
-                        .map(i -> isPandigitalMultipleRest(pandigitalRest.drop(i), multiplicand, multiplicator + 1))
-                        .getOrElse(false)
-                )
-        );
+        if (pandigitalRest.length() == 0) {
+            return true;
+        }
+        return List.rangeClosed(1, pandigitalRest.length())
+          .find(i -> Integer.parseInt(pandigitalRest.take(i).mkString()) == multiplicand * multiplicator)
+          .map(i -> isPandigitalMultipleRest(pandigitalRest.drop(i), multiplicand, multiplicator + 1))
+          .getOrElse(false);
     }
 }

@@ -316,14 +316,6 @@ public abstract class AbstractTraversableTest extends AbstractValueTest {
     }
 
     @Test
-    public void shouldCollectUsingCase() {
-        final Traversable<String> actual = of(1, 2, 3).collect(
-                Case($(i -> i % 2 == 1), String::valueOf)
-        );
-        assertThat(actual).isEqualTo(of("1", "3"));
-    }
-
-    @Test
     public void shouldCollectUsingMap() {
         final Map<Integer, String> map = Map(1, "one", 3, "three");
         final Traversable<String> actual = of(1, 2, 3, 4).collect(map.asPartialFunction());

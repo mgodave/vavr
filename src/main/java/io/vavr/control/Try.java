@@ -30,7 +30,6 @@ import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.*;
 
-import static io.vavr.API.Match;
 import static io.vavr.control.TryModule.isFatal;
 import static io.vavr.control.TryModule.sneakyThrow;
 
@@ -708,16 +707,15 @@ public sealed interface Try<T> extends Iterable<T>, io.vavr.Value<T>, Serializab
      * <p>
      * If none of the given cases matches the cause, the same {@code Failure} is returned.
      *
-     * @param cases A not necessarily exhaustive sequence of cases that will be matched against a cause.
+     * @param mapF A not necessarily exhaustive sequence of cases that will be matched against a cause.
      * @return A new {@code Try} if this is a {@code Failure}, otherwise this.
      */
     @SuppressWarnings({ "unchecked", "varargs" })
-    default Try<T> mapFailure(Match.Case<? extends Throwable, ? extends Throwable>... cases) {
+    default Try<T> mapFailure(PartialFunction<Throwable, Throwable> mapF) {
         if (isSuccess()) {
             return this;
         } else {
-            final Option<Throwable> x = Match(getCause()).option(cases);
-            return x.isEmpty() ? this : failure(x.get());
+            return mapF.isDefinedAt(getCause()) ? failure(mapF.apply(getCause())) : this;
         }
     }
 

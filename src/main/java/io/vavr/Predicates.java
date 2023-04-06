@@ -25,7 +25,6 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
- * Defines general-purpose predicates which are particularly useful when working with {@link API.Match}.
  * @deprecated Will be removed in the next major version, along with VAVR's pattern matching, in favor of Java's native pattern matching.
  */
 @Deprecated

@@ -59,16 +59,14 @@ public class Euler37Test {
     }
 
     private static boolean isTruncatablePrime(int prime) {
-        return Match(prime).of(
-                Case($(p -> p > 7), p -> {
-                    final CharSeq primeSeq = CharSeq.of(Integer.toString(p));
-                    return List.rangeClosed(1, primeSeq.length() - 1)
-                            .flatMap(i -> List.of(primeSeq.drop(i), primeSeq.dropRight(i)))
-                            .map(CharSeq::mkString)
-                            .map(Long::valueOf)
-                            .forAll(Utils.MEMOIZED_IS_PRIME::apply);
-                }),
-                Case($(), false)
-        );
+        if (prime > 7) {
+            final CharSeq primeSeq = CharSeq.of(Integer.toString(prime));
+            return List.rangeClosed(1, primeSeq.length() - 1)
+              .flatMap(i -> List.of(primeSeq.drop(i), primeSeq.dropRight(i)))
+              .map(CharSeq::mkString)
+              .map(Long::valueOf)
+              .forAll(Utils.MEMOIZED_IS_PRIME::apply);
+        }
+        return false;
     }
 }

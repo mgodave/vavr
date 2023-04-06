@@ -34,11 +34,11 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.Collections;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static io.vavr.API.*;
-import static io.vavr.Predicates.anyOf;
-import static io.vavr.Predicates.instanceOf;
+import static io.vavr.Predicates.*;
 
 @SuppressWarnings("deprecation")
 public abstract class AbstractValueTest {
@@ -987,22 +987,24 @@ public abstract class AbstractValueTest {
             throw new Error("empty and non-empty do not consistently implement Serializable");
         }
         final boolean actual = nonEmpty instanceof Serializable;
-        final boolean expected = Match(nonEmpty).of(
-                Case($(anyOf(
-                        instanceOf(Either.LeftProjection.class),
-                        instanceOf(Either.RightProjection.class),
-                        instanceOf(Future.class),
-                        instanceOf(io.vavr.collection.Iterator.class)
-                )), false),
-                Case($(anyOf(
-                        instanceOf(Either.class),
-                        instanceOf(Lazy.class),
-                        instanceOf(Option.class),
-                        instanceOf(Try.class),
-                        instanceOf(Traversable.class),
-                        instanceOf(Validation.class)
-                )), true)
+
+        final Predicate<Object> expectedTypes = anyOf(
+          instanceOf(Either.class),
+          instanceOf(Lazy.class),
+          instanceOf(Option.class),
+          instanceOf(Try.class),
+          instanceOf(Traversable.class),
+          instanceOf(Validation.class)
         );
+
+        final Predicate<Object> unexpectedTypes = anyOf(
+          instanceOf(Either.LeftProjection.class),
+          instanceOf(Either.RightProjection.class),
+          instanceOf(Future.class),
+          instanceOf(io.vavr.collection.Iterator.class)
+        );
+
+        final boolean expected = expectedTypes.and(not(unexpectedTypes)).test(nonEmpty);
         assertThat(actual).isEqualTo(expected);
         return actual;
     }

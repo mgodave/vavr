@@ -24,7 +24,6 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.util.function.Predicate;
 
-import static io.vavr.API.$;
 import static io.vavr.API.*;
 import static io.vavr.Predicates.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -79,10 +78,7 @@ public class PredicatesTest {
     public void shouldCheckExistsByLiftingPredicateInContravariantPositionToPredicateInCovariantPosition() {
         final List<Integer> list = List(1, 2, 3);
         final Predicate<Number> p = n -> n.intValue() % 2 == 0;
-        final boolean actual = Match(list).of(
-                Case($(exists(p)), true),
-                Case($(), false)
-        );
+        final boolean actual = list.find(p).isDefined();
         assertThat(actual).isTrue();
     }
 
@@ -102,10 +98,7 @@ public class PredicatesTest {
     public void shouldCheckForAllByLiftingPredicateInContravariantPositionToPredicateInCovariantPosition() {
         final List<Integer> list = List(1, 2, 3);
         final Predicate<Number> p = n -> n.intValue() > 0;
-        final boolean actual = Match(list).of(
-                Case($(forAll(p)), true),
-                Case($(), false)
-        );
+        final boolean actual = list.toStream().forAll(p);
         assertThat(actual).isTrue();
     }
 

@@ -1147,9 +1147,17 @@ public class TryTest extends AbstractValueTest {
     @Test
     public void shouldMapFailureWhenSuccess() {
         final Try<Integer> testee = Success(1);
-        final Try<Integer> actual = testee.mapFailure(
-                Case($(instanceOf(RuntimeException.class)), (Function<RuntimeException, Error>) Error::new)
-        );
+        final Try<Integer> actual = testee.mapFailure(new PartialFunction<>() {
+            @Override
+            public Throwable apply(Throwable throwable) {
+                return new Error(throwable);
+            }
+
+            @Override
+            public boolean isDefinedAt(Throwable value) {
+                return value instanceof RuntimeException;
+            }
+        });
         assertThat(actual).isSameAs(testee);
     }
 
@@ -1157,9 +1165,17 @@ public class TryTest extends AbstractValueTest {
     @Test
     public void shouldMapFailureWhenFailureAndMatches() {
         final Try<Integer> testee = Failure(new IOException());
-        final Try<Integer> actual = testee.mapFailure(
-                Case($(instanceOf(IOException.class)), (Function<IOException, Error>) Error::new)
-        );
+        final Try<Integer> actual = testee.mapFailure(new PartialFunction<>() {
+            @Override
+            public Throwable apply(Throwable throwable) {
+                return new Error(throwable);
+            }
+
+            @Override
+            public boolean isDefinedAt(Throwable value) {
+                return value instanceof IOException;
+            }
+        });
         assertThat(actual.getCause()).isInstanceOf(Error.class);
     }
 
@@ -1167,9 +1183,17 @@ public class TryTest extends AbstractValueTest {
     @Test
     public void shouldMapFailureWhenFailureButDoesNotMatch() {
         final Try<Integer> testee = Failure(new IOException());
-        final Try<Integer> actual = testee.mapFailure(
-                Case($(instanceOf(RuntimeException.class)), (Function<RuntimeException, Error>) Error::new)
-        );
+        final Try<Integer> actual = testee.mapFailure(new PartialFunction<>() {
+            @Override
+            public Throwable apply(Throwable throwable) {
+                return new Error(throwable);
+            }
+
+            @Override
+            public boolean isDefinedAt(Throwable value) {
+                return value instanceof RuntimeException;
+            }
+        });
         assertThat(actual).isSameAs(testee);
     }
 

@@ -75,11 +75,12 @@ public class Euler23Test {
     }
 
     private static boolean canBeWrittenAsTheSumOfTwoAbundantNumbers(long l) {
-        return Match(l).of(
-                Case($(n -> n < SMALLEST_NUMBER_WRITTEN_AS_THE_SUM_OF_TO_ABUNDANT_NUMBERS), false),
-                Case($(SMALLEST_NUMBER_WRITTEN_AS_THE_SUM_OF_TO_ABUNDANT_NUMBERS), true),
-                Case($(), () -> Stream.rangeClosed(SMALLEST_ABUNDANT_NUMBER, l / 2).exists(a -> isAbundant.apply(a) && isAbundant.apply(l - a)))
-        );
+        if (l < SMALLEST_NUMBER_WRITTEN_AS_THE_SUM_OF_TO_ABUNDANT_NUMBERS) {
+            return false;
+        } else if (l == SMALLEST_NUMBER_WRITTEN_AS_THE_SUM_OF_TO_ABUNDANT_NUMBERS) {
+            return true;
+        }
+        return Stream.rangeClosed(SMALLEST_ABUNDANT_NUMBER, l / 2).exists(a -> isAbundant.apply(a) && isAbundant.apply(l - a));
     }
 
     private static final Function1<Long, Boolean> isAbundant = Function1.of((Long l) -> Utils.divisors(l).sum().longValue() > l).memoized();
