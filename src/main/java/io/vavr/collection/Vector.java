@@ -1283,7 +1283,7 @@ interface VectorModule {
             return (k == 0)
                    ? Vector.of(Vector.empty())
                    : elements.zipWithIndex().flatMap(
-                    t -> apply(elements.drop(t._2 + 1), (k - 1)).map((Vector<T> c) -> c.prepend(t._1)));
+                    t -> apply(elements.drop(t._2() + 1), (k - 1)).map((Vector<T> c) -> c.prepend(t._1())));
         }
     }
 }

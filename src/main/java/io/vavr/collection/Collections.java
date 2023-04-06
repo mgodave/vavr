@@ -215,7 +215,7 @@ final class Collections {
     static <T, S extends Seq<T>> Seq<S> group(S source, Supplier<S> supplier) {
         return source.foldLeft(HashMap.empty(), (Map<T, S> map, T value) ->
                 map.put(value, (S) map.getOrElse(value, supplier.get()).append(value)))
-                .map(entry -> entry._2);
+                .map(Tuple2::_2);
     }
 
     static <T, C, R extends Iterable<T>> Map<C, R> groupBy(Traversable<T> source, Function<? super T, ? extends C> classifier, Function<? super Iterable<T>, R> mapper) {
@@ -295,8 +295,8 @@ final class Collections {
         Objects.requireNonNull(keyMapper, "keyMapper is null");
         Objects.requireNonNull(valueMerge, "valueMerge is null");
         return source.foldLeft(zero, (acc, entry) -> {
-            final K2 k2 = keyMapper.apply(entry._1);
-            final V v2 = entry._2;
+            final K2 k2 = keyMapper.apply(entry._1());
+            final V v2 = entry._2();
             final Option<V> v1 = acc.get(k2);
             final V v = v1.isDefined() ? valueMerge.apply(v1.get(), v2) : v2;
             return (U) acc.put(k2, v);

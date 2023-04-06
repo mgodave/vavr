@@ -1528,10 +1528,10 @@ public abstract class Stream<T> implements LinearSeq<T> {
     @Override
     public final Tuple2<Stream<T>, Stream<T>> splitAtInclusive(Predicate<? super T> predicate) {
         final Tuple2<Stream<T>, Stream<T>> split = splitAt(predicate);
-        if (split._2.isEmpty()) {
+        if (split._2().isEmpty()) {
             return split;
         } else {
-            return Tuple.of(split._1.append(split._2.head()), split._2.tail());
+            return Tuple.of(split._1().append(split._2().head()), split._2().tail());
         }
     }
 
@@ -2114,7 +2114,7 @@ public abstract class Stream<T> implements LinearSeq<T> {
                 return Stream.of(Stream.empty());
             } else {
                 return elements.zipWithIndex().flatMap(
-                        t -> apply(elements.drop(t._2 + 1), (k - 1)).map((Stream<T> c) -> c.prepend(t._1))
+                        t -> apply(elements.drop(t._2() + 1), (k - 1)).map((Stream<T> c) -> c.prepend(t._1()))
                 );
             }
         }

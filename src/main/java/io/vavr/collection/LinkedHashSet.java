@@ -700,12 +700,12 @@ public final class LinkedHashSet<T> implements Set<T>, Serializable {
 
     @Override
     public Iterator<T> iterator() {
-        return map.iterator().map(t -> t._1);
+        return map.iterator().map(Tuple2::_1);
     }
 
     @Override
     public T last() {
-        return map.last()._1;
+        return map.last()._1();
     }
 
     @Override
@@ -823,7 +823,7 @@ public final class LinkedHashSet<T> implements Set<T>, Serializable {
     public Tuple2<LinkedHashSet<T>, LinkedHashSet<T>> span(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate, "predicate is null");
         final Tuple2<Iterator<T>, Iterator<T>> t = iterator().span(predicate);
-        return Tuple.of(LinkedHashSet.ofAll(t._1), LinkedHashSet.ofAll(t._2));
+        return Tuple.of(LinkedHashSet.ofAll(t._1()), LinkedHashSet.ofAll(t._2()));
     }
 
     @Override
@@ -1041,7 +1041,7 @@ public final class LinkedHashSet<T> implements Set<T>, Serializable {
             s.defaultWriteObject();
             s.writeInt(map.size());
             for (Tuple2<T, Object> e : map) {
-                s.writeObject(e._1);
+                s.writeObject(e._1());
             }
         }
 

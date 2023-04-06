@@ -185,7 +185,7 @@ public interface Map<K, V> extends Traversable<Tuple2<K, V>>, PartialFunction<K,
 
     @Override
     default boolean contains(Tuple2<K, V> element) {
-        return get(element._1).map(v -> Objects.equals(v, element._2)).getOrElse(false);
+        return get(element._1()).map(v -> Objects.equals(v, element._2())).getOrElse(false);
     }
 
     /**
@@ -327,7 +327,7 @@ public interface Map<K, V> extends Traversable<Tuple2<K, V>>, PartialFunction<K,
     default void forEach(BiConsumer<K, V> action) {
         Objects.requireNonNull(action, "action is null");
         for (Tuple2<K, V> t : this) {
-            action.accept(t._1, t._2);
+            action.accept(t._1(), t._2());
         }
     }
 
@@ -373,7 +373,7 @@ public interface Map<K, V> extends Traversable<Tuple2<K, V>>, PartialFunction<K,
      */
     default <U> Iterator<U> iterator(BiFunction<K, V, ? extends U> mapper) {
         Objects.requireNonNull(mapper, "mapper is null");
-        return iterator().map(t -> mapper.apply(t._1, t._2));
+        return iterator().map(t -> mapper.apply(t._1(), t._2()));
     }
 
     /**
@@ -594,7 +594,7 @@ public interface Map<K, V> extends Traversable<Tuple2<K, V>>, PartialFunction<K,
     }
 
     default Tuple2<Iterator<K>, Iterator<V>> unzip() {
-        return unzip(entry -> entry._1, entry -> entry._2);
+        return unzip(Tuple2::_1, Tuple2::_2);
     }
 
     /**

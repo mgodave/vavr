@@ -1289,7 +1289,7 @@ public interface Iterator<T> extends java.util.Iterator<T>, Traversable<T> {
     static <T, U> Iterator<U> unfoldLeft(T seed, Function<? super T, Option<Tuple2<? extends T, ? extends U>>> f) {
         Objects.requireNonNull(f, "f is null");
         return Stream.<U> ofAll(
-                unfoldRight(seed, f.andThen(tupleOpt -> tupleOpt.map(t -> Tuple.of(t._2, t._1)))))
+                unfoldRight(seed, f.andThen(tupleOpt -> tupleOpt.map(t -> Tuple.of(t._2(), t._1())))))
                 .reverse().iterator();
     }
 
@@ -1333,8 +1333,8 @@ public interface Iterator<T> extends java.util.Iterator<T>, Traversable<T> {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
-                final U result = nextVal.get()._1;
-                nextVal = f.apply(nextVal.get()._2);
+                final U result = nextVal.get()._1();
+                nextVal = f.apply(nextVal.get()._2());
                 return result;
             }
         };
@@ -1434,8 +1434,8 @@ public interface Iterator<T> extends java.util.Iterator<T>, Traversable<T> {
                         throw new NoSuchElementException();
                     }
                     final Tuple2<T, io.vavr.collection.Queue<T>> t = queue.append(that.next()).dequeue();
-                    queue = t._2;
-                    return t._1;
+                    queue = t._2();
+                    return t._1();
                 }
             };
         }
@@ -1727,7 +1727,7 @@ public interface Iterator<T> extends java.util.Iterator<T>, Traversable<T> {
             return Tuple.of(empty(), empty());
         } else {
             final Tuple2<Iterator<T>, Iterator<T>> dup = IteratorModule.duplicate(this);
-            return Tuple.of(dup._1.filter(predicate), dup._2.filterNot(predicate));
+            return Tuple.of(dup._1().filter(predicate), dup._2().filterNot(predicate));
         }
     }
 
@@ -2028,7 +2028,7 @@ public interface Iterator<T> extends java.util.Iterator<T>, Traversable<T> {
                     while (that.hasNext()) {
                         queue = queue.enqueue(that.next());
                         if (queue.length() > n) {
-                            queue = queue.dequeue()._2;
+                            queue = queue.dequeue()._2();
                         }
                     }
                     return queue.length() > 0;
@@ -2040,8 +2040,8 @@ public interface Iterator<T> extends java.util.Iterator<T>, Traversable<T> {
                         throw new NoSuchElementException();
                     }
                     final Tuple2<T, io.vavr.collection.Queue<T>> t = queue.dequeue();
-                    queue = t._2;
-                    return t._1;
+                    queue = t._2();
+                    return t._1();
                 }
             };
         }

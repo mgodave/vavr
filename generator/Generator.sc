@@ -1236,7 +1236,7 @@ def generateMainClasses(): Unit = {
                               @Override
                               public $resultType apply(T obj) {
                                   ${if (i == 1) xs"""
-                                    return (T1) unapply.apply(obj)._1;
+                                    return (T1) unapply.apply(obj)._1();
                                   """ else xs"""
                                     return ($resultType) unapply.apply(obj);
                                   """}
@@ -1248,7 +1248,7 @@ def generateMainClasses(): Unit = {
                                   if (type.isInstance(obj)) {
                                       final $unapplyTupleType u = unapply.apply(obj);
                                       return
-                                              ${(1 to i).gen(j => s"((Pattern<U$j, ?>) p$j).isDefinedAt(u._$j)")(" &&\n")};
+                                              ${(1 to i).gen(j => s"((Pattern<U$j, ?>) p$j).isDefinedAt(u._$j())")(" &&\n")};
                                   } else {
                                       return false;
                                   }
@@ -1469,7 +1469,7 @@ def generateMainClasses(): Unit = {
         val paramsDecl = (1 to i).gen(j => s"T$j t$j")(", ")
         val params = (1 to i).gen(j => s"t$j")(", ")
         val paramsReversed = (1 to i).reverse.gen(j => s"t$j")(", ")
-        val tupled = (1 to i).gen(j => s"t._$j")(", ")
+        val tupled = (1 to i).gen(j => s"t._$j()")(", ")
         val compositionType = if(checked) "CheckedFunction1" else im.getType("java.util.function.Function")
 
         // imports
@@ -1943,21 +1943,16 @@ def generateMainClasses(): Unit = {
         im.getType("java.util.AbstractMap")
       }
 
+      val ParameterList = (1 to i).gen(j => xs"""T$j _$j""")(" ,")
+
       xs"""
         /**
          * A tuple of ${i.numerus("element")} which can be seen as cartesian product of ${i.numerus("component")}.
          ${(0 to i).gen(j => if (j == 0) "*" else s"* @param <T$j> type of the ${j.ordinal} element")("\n")}
          */
-        public final class $className$generics implements Tuple, ${im.getType("java.io.Serializable")} {
+        public record $className$generics(${ParameterList}) implements Tuple, ${im.getType("java.io.Serializable")} {
 
             private static final long serialVersionUID = 1L;
-
-            ${(1 to i).gen(j => xs"""
-              /$javadoc
-               * The ${j.ordinal} element of this tuple.
-               */
-              public final T$j _$j;
-            """)("\n\n")}
 
             ${if (i == 0) xs"""
               /$javadoc
@@ -1970,10 +1965,6 @@ def generateMainClasses(): Unit = {
                */
               private static final Comparator<Tuple0> COMPARATOR = (Comparator<Tuple0> & Serializable) (t1, t2) -> 0;
 
-              // hidden constructor, internally called
-              private Tuple0 () {
-              }
-
               /$javadoc
                * Returns the singleton instance of Tuple0.
                *
@@ -1983,13 +1974,7 @@ def generateMainClasses(): Unit = {
                   return INSTANCE;
               }
             """ else xs"""
-              /$javadoc
-               * Constructs a tuple of ${i.numerus("element")}.
-               ${(0 to i).gen(j => if (j == 0) "*" else s"* @param t$j the ${j.ordinal} element")("\n")}
-               */
-              public $className($paramsDecl) {
-                  ${(1 to i).gen(j => s"this._$j = t$j;")("\n")}
-              }
+
             """}
 
             public static $generics $Comparator<$className$generics> comparator(${(1 to i).gen(j => s"$Comparator<? super T$j> t${j}Comp")(", ")}) {
@@ -2034,15 +2019,6 @@ def generateMainClasses(): Unit = {
             }
 
             ${(1 to i).gen(j => xs"""
-              /$javadoc
-               * Getter of the ${j.ordinal} element of this tuple.
-               *
-               * @return the ${j.ordinal} element of this Tuple.
-               */
-              public T$j _$j() {
-                  return _$j;
-              }
-
               /$javadoc
                * Sets the ${j.ordinal} element of this tuple to the given {@code value}.
                *
@@ -2204,7 +2180,7 @@ def generateMainClasses(): Unit = {
                */
               public <${(i+1 to i+j).gen(k => s"T$k")(", ")}> Tuple${i+j}<${(1 to i+j).gen(k => s"T$k")(", ")}> concat(Tuple$j<${(i+1 to i+j).gen(k => s"T$k")(", ")}> tuple) {
                   Objects.requireNonNull(tuple, "tuple is null");
-                  return ${im.getType("io.vavr.Tuple")}.of(${(1 to i).gen(k => s"_$k")(", ")}${(i > 0).gen(", ")}${(1 to j).gen(k => s"tuple._$k")(", ")});
+                  return ${im.getType("io.vavr.Tuple")}.of(${(1 to i).gen(k => s"_$k")(", ")}${(i > 0).gen(", ")}${(1 to j).gen(k => s"tuple._$k()")(", ")});
               }
             """)("\n\n")}
 
@@ -2228,7 +2204,7 @@ def generateMainClasses(): Unit = {
 
             @Override
             public int hashCode() {
-                return ${if (i == 0) "1" else if (i == 1) "Objects.hashCode(_1)" else s"""Objects.hash(${(1 to i).gen(j => s"_$j")(", ")})"""};
+                return ${if (i == 0) "1" else if (i == 1) "Objects.hashCode(_1)" else s"""Objects.hash(${(1 to i).gen(j => s"_$j()")(", ")})"""};
             }
 
             @Override
@@ -3550,7 +3526,7 @@ def generateTestClasses(): Unit = {
                 @$test
                 public void shouldReturnElements() {
                     final Tuple$i$intGenerics tuple = createIntTuple(${(1 to i).gen(j => s"$j")(", ")});
-                    ${(1 to i).gen(j => s"$assertThat(tuple._$j).isEqualTo($j);\n")}
+                    ${(1 to i).gen(j => s"$assertThat(tuple._$j()).isEqualTo($j);\n")}
                 }
               """)}
 
@@ -3559,7 +3535,7 @@ def generateTestClasses(): Unit = {
                   @$test
                   public void shouldUpdate$j() {
                     final Tuple$i$intGenerics tuple = createIntTuple(${(1 to i).gen(j => s"$j")(", ")}).update$j(42);
-                    ${(1 to i).gen(k => s"$assertThat(tuple._$k).isEqualTo(${if (j == k) 42 else k});\n")}
+                    ${(1 to i).gen(k => s"$assertThat(tuple._$k()).isEqualTo(${if (j == k) 42 else k});\n")}
                   }
                 """)("\n\n")}
 
@@ -3568,7 +3544,7 @@ def generateTestClasses(): Unit = {
                   @$test
                   public void shouldRemove$j() {
                     final Tuple${i-1}${if (i != 1) "<" else ""}${(1 to i-1).gen(j => s"Integer")(", ")}${if (i != 1) ">" else ""} tuple = createIntTuple(${(1 to i).gen(j => s"$j")(", ")}).remove$j();
-                    ${(1 to i-1).gen(k => s"$assertThat(tuple._$k).isEqualTo(${if (k < j) k else k + 1});\n")}
+                    ${(1 to i-1).gen(k => s"$assertThat(tuple._$k()).isEqualTo(${if (k < j) k else k + 1});\n")}
                   }
                 """)("\n\n")}
 

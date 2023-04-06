@@ -526,7 +526,7 @@ public class IteratorTest extends AbstractTraversableTest {
     @Override
     public void shouldNonNilGroupByIdentity() {
         // we can't compare iterators, should map it to sequences
-        final Seq<?> actual = of('a', 'b', 'c').groupBy(Function.identity()).map(e -> Tuple.of(e._1, List.ofAll(e._2)));
+        final Seq<?> actual = of('a', 'b', 'c').groupBy(Function.identity()).map(e -> Tuple.of(e._1(), List.ofAll(e._2())));
         final Seq<?> expected = HashMap.of(
                 'a', List.ofAll(of('a')),
                 'b', List.ofAll(of('b')),
@@ -537,7 +537,7 @@ public class IteratorTest extends AbstractTraversableTest {
     @Override
     public void shouldNonNilGroupByEqual() {
         // we can't compare iterators, should map it to sequences
-        final Seq<?> actual = of('a', 'b', 'c').groupBy(c -> 1).map(e -> Tuple.of(e._1, List.ofAll(e._2)));
+        final Seq<?> actual = of('a', 'b', 'c').groupBy(c -> 1).map(e -> Tuple.of(e._1(), List.ofAll(e._2())));
         final Seq<?> expected = HashMap.of(1, List.ofAll(of('a', 'b', 'c'))).toList();
         assertThat(actual).isEqualTo(expected);
     }
@@ -661,26 +661,26 @@ public class IteratorTest extends AbstractTraversableTest {
         multipleHasNext(() -> Iterator.of(1, 2, 3, 4).grouped(2));
         multipleHasNext(() -> Iterator.of(1, 2, 3, 4).intersperse(-1));
         multipleHasNext(() -> Iterator.of(1, 2, 3).map(i -> i * 2));
-        multipleHasNext(() -> Iterator.of(1, 2, 3).partition(i -> i < 2)._1);
-        multipleHasNext(() -> Iterator.of(1, 2, 3).partition(i -> i < 2)._2);
+        multipleHasNext(() -> Iterator.of(1, 2, 3).partition(i -> i < 2)._1());
+        multipleHasNext(() -> Iterator.of(1, 2, 3).partition(i -> i < 2)._2());
         multipleHasNext(() -> Iterator.of(1, 2, 3, 2).replace(2, 42));
         multipleHasNext(() -> Iterator.of(1, 2, 3, 2).replaceAll(2, 42));
         multipleHasNext(() -> Iterator.of(1, 2, 3).retainAll(List.of(2)));
-        multipleHasNext(() -> Iterator.of(1, 2, 3).scanLeft(1, (a, b) -> a + b));
-        multipleHasNext(() -> Iterator.of(1, 2, 3).scanRight(1, (a, b) -> a + b));
+        multipleHasNext(() -> Iterator.of(1, 2, 3).scanLeft(1, Integer::sum));
+        multipleHasNext(() -> Iterator.of(1, 2, 3).scanRight(1, Integer::sum));
         multipleHasNext(() -> Iterator.of(1, 2, 3).slideBy(Function.identity()));
         multipleHasNext(() -> Iterator.of(1, 2, 3, 4).sliding(2));
         multipleHasNext(() -> Iterator.of(1, 2, 3, 4).sliding(2, 1));
-        multipleHasNext(() -> Iterator.of(1, 2, 3, 4).unzip(i -> i, i -> i + 1)._1);
-        multipleHasNext(() -> Iterator.of(1, 2, 3, 4).unzip(i -> i, i -> i + 1)._2);
-        multipleHasNext(() -> Iterator.of(1, 2, 3, 4).unzip3(i -> i, i -> i + 1, i -> i + 2)._1);
-        multipleHasNext(() -> Iterator.of(1, 2, 3, 4).unzip3(i -> i, i -> i + 1, i -> i + 2)._2);
-        multipleHasNext(() -> Iterator.of(1, 2, 3, 4).unzip3(i -> i, i -> i + 1, i -> i + 2)._3);
+        multipleHasNext(() -> Iterator.of(1, 2, 3, 4).unzip(i -> i, i -> i + 1)._1());
+        multipleHasNext(() -> Iterator.of(1, 2, 3, 4).unzip(i -> i, i -> i + 1)._2());
+        multipleHasNext(() -> Iterator.of(1, 2, 3, 4).unzip3(i -> i, i -> i + 1, i -> i + 2)._1());
+        multipleHasNext(() -> Iterator.of(1, 2, 3, 4).unzip3(i -> i, i -> i + 1, i -> i + 2)._2());
+        multipleHasNext(() -> Iterator.of(1, 2, 3, 4).unzip3(i -> i, i -> i + 1, i -> i + 2)._3());
         multipleHasNext(() -> Iterator.of(1, 2, 3, 4).zip(Iterator.from(1)));
         multipleHasNext(() -> Iterator.of(1, 2, 3, 4).zipAll(Iterator.of(1, 2), -1, -2));
-        multipleHasNext(() -> Iterator.of(1, 2, 3, 4).zipWith(Iterator.of(1, 2), (a, b) -> a + b));
+        multipleHasNext(() -> Iterator.of(1, 2, 3, 4).zipWith(Iterator.of(1, 2), Integer::sum));
         multipleHasNext(() -> Iterator.of(1, 2, 3, 4).zipWithIndex());
-        multipleHasNext(() -> Iterator.of(1, 2, 3, 4).zipWithIndex((a, i) -> a + i));
+        multipleHasNext(() -> Iterator.of(1, 2, 3, 4).zipWithIndex(Integer::sum));
     }
 
     private <T> void multipleHasNext(Supplier<Iterator<T>> it) {
@@ -738,8 +738,8 @@ public class IteratorTest extends AbstractTraversableTest {
     @Test
     public void shouldPartition() {
         final Tuple2<Iterator<String>, Iterator<String>> partitions = of("1", "2", "3").partition("2"::equals);
-        assertThat(String.join(", ", partitions._1)).isEqualTo("2");
-        assertThat(String.join(", ", partitions._2)).isEqualTo("1, 3");
+        assertThat(String.join(", ", partitions._1())).isEqualTo("2");
+        assertThat(String.join(", ", partitions._2())).isEqualTo("1, 3");
     }
 
     @Test(timeout = 5_000L)  // avoid endless test caused by infinite iterator
@@ -759,11 +759,11 @@ public class IteratorTest extends AbstractTraversableTest {
 
         // When moving forwards iterators
         // Then the moves are done as expected
-        assertThat(partitions._1.hasNext()).isTrue();
-        assertThat(partitions._1.next()).isEqualTo(2);
+        assertThat(partitions._1().hasNext()).isTrue();
+        assertThat(partitions._1().next()).isEqualTo(2);
         for (int i : of(1, 3, 5)) {
-            assertThat(partitions._2.hasNext()).isTrue();
-            assertThat(partitions._2.next()).isEqualTo(i);
+            assertThat(partitions._2().hasNext()).isTrue();
+            assertThat(partitions._2().next()).isEqualTo(i);
         }
         assertThat(itemsCalled).containsExactly(1, 2, 3, 4);
     }

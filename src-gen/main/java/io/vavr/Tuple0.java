@@ -33,7 +33,7 @@ import java.util.function.Supplier;
  * A tuple of no elements which can be seen as cartesian product of no components.
  *
  */
-public final class Tuple0 implements Tuple, Serializable {
+public record Tuple0() implements Tuple, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -46,10 +46,6 @@ public final class Tuple0 implements Tuple, Serializable {
      * The singleton Tuple0 comparator.
      */
     private static final Comparator<Tuple0> COMPARATOR = (Comparator<Tuple0> & Serializable) (t1, t2) -> 0;
-
-    // hidden constructor, internally called
-    private Tuple0 () {
-    }
 
     /**
      * Returns the singleton instance of Tuple0.
@@ -119,7 +115,7 @@ public final class Tuple0 implements Tuple, Serializable {
      */
     public <T1> Tuple1<T1> concat(Tuple1<T1> tuple) {
         Objects.requireNonNull(tuple, "tuple is null");
-        return Tuple.of(tuple._1);
+        return Tuple.of(tuple._1());
     }
 
     /**
@@ -133,7 +129,7 @@ public final class Tuple0 implements Tuple, Serializable {
      */
     public <T1, T2> Tuple2<T1, T2> concat(Tuple2<T1, T2> tuple) {
         Objects.requireNonNull(tuple, "tuple is null");
-        return Tuple.of(tuple._1, tuple._2);
+        return Tuple.of(tuple._1(), tuple._2());
     }
 
     /**
@@ -148,7 +144,7 @@ public final class Tuple0 implements Tuple, Serializable {
      */
     public <T1, T2, T3> Tuple3<T1, T2, T3> concat(Tuple3<T1, T2, T3> tuple) {
         Objects.requireNonNull(tuple, "tuple is null");
-        return Tuple.of(tuple._1, tuple._2, tuple._3);
+        return Tuple.of(tuple._1(), tuple._2(), tuple._3());
     }
 
     /**
@@ -164,7 +160,7 @@ public final class Tuple0 implements Tuple, Serializable {
      */
     public <T1, T2, T3, T4> Tuple4<T1, T2, T3, T4> concat(Tuple4<T1, T2, T3, T4> tuple) {
         Objects.requireNonNull(tuple, "tuple is null");
-        return Tuple.of(tuple._1, tuple._2, tuple._3, tuple._4);
+        return Tuple.of(tuple._1(), tuple._2(), tuple._3(), tuple._4());
     }
 
     /**
@@ -181,7 +177,7 @@ public final class Tuple0 implements Tuple, Serializable {
      */
     public <T1, T2, T3, T4, T5> Tuple5<T1, T2, T3, T4, T5> concat(Tuple5<T1, T2, T3, T4, T5> tuple) {
         Objects.requireNonNull(tuple, "tuple is null");
-        return Tuple.of(tuple._1, tuple._2, tuple._3, tuple._4, tuple._5);
+        return Tuple.of(tuple._1(), tuple._2(), tuple._3(), tuple._4(), tuple._5());
     }
 
     /**
@@ -199,7 +195,7 @@ public final class Tuple0 implements Tuple, Serializable {
      */
     public <T1, T2, T3, T4, T5, T6> Tuple6<T1, T2, T3, T4, T5, T6> concat(Tuple6<T1, T2, T3, T4, T5, T6> tuple) {
         Objects.requireNonNull(tuple, "tuple is null");
-        return Tuple.of(tuple._1, tuple._2, tuple._3, tuple._4, tuple._5, tuple._6);
+        return Tuple.of(tuple._1(), tuple._2(), tuple._3(), tuple._4(), tuple._5(), tuple._6());
     }
 
     /**
@@ -218,7 +214,7 @@ public final class Tuple0 implements Tuple, Serializable {
      */
     public <T1, T2, T3, T4, T5, T6, T7> Tuple7<T1, T2, T3, T4, T5, T6, T7> concat(Tuple7<T1, T2, T3, T4, T5, T6, T7> tuple) {
         Objects.requireNonNull(tuple, "tuple is null");
-        return Tuple.of(tuple._1, tuple._2, tuple._3, tuple._4, tuple._5, tuple._6, tuple._7);
+        return Tuple.of(tuple._1(), tuple._2(), tuple._3(), tuple._4(), tuple._5(), tuple._6(), tuple._7());
     }
 
     /**
@@ -238,7 +234,7 @@ public final class Tuple0 implements Tuple, Serializable {
      */
     public <T1, T2, T3, T4, T5, T6, T7, T8> Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> concat(Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> tuple) {
         Objects.requireNonNull(tuple, "tuple is null");
-        return Tuple.of(tuple._1, tuple._2, tuple._3, tuple._4, tuple._5, tuple._6, tuple._7, tuple._8);
+        return Tuple.of(tuple._1(), tuple._2(), tuple._3(), tuple._4(), tuple._5(), tuple._6(), tuple._7(), tuple._8());
     }
 
     // -- Object

@@ -113,7 +113,7 @@ public final class PriorityQueue<T> extends io.vavr.collection.AbstractQueue<T, 
         if (isEmpty()) {
             throw new UnsupportedOperationException("tail of empty " + stringPrefix());
         } else {
-            return dequeue()._2;
+            return dequeue()._2();
         }
     }
 
@@ -123,7 +123,7 @@ public final class PriorityQueue<T> extends io.vavr.collection.AbstractQueue<T, 
             throw new NoSuchElementException("dequeue of empty " + stringPrefix());
         } else {
             final Tuple2<T, Seq<Node<T>>> dequeue = deleteMin(comparator, this.forest);
-            return Tuple.of(dequeue._1, with(dequeue._2, this.size - 1));
+            return Tuple.of(dequeue._1(), with(dequeue._2(), this.size - 1));
         }
     }
 
@@ -298,8 +298,8 @@ public final class PriorityQueue<T> extends io.vavr.collection.AbstractQueue<T, 
         io.vavr.collection.List<T> results = io.vavr.collection.List.empty();
         for (PriorityQueue<T> queue = this; !queue.isEmpty(); ) {
             final Tuple2<T, PriorityQueue<T>> dequeue = queue.dequeue();
-            results = results.prepend(dequeue._1);
-            queue = dequeue._2;
+            results = results.prepend(dequeue._1());
+            queue = dequeue._2();
         }
         return results.reverse();
     }

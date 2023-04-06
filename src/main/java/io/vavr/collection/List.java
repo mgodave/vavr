@@ -1471,7 +1471,7 @@ public abstract class List<T> implements LinearSeq<T> {
     public final Tuple2<List<T>, List<T>> span(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate, "predicate is null");
         final Tuple2<Iterator<T>, Iterator<T>> itt = iterator().span(predicate);
-        return Tuple.of(ofAll(itt._1), ofAll(itt._2));
+        return Tuple.of(ofAll(itt._1()), ofAll(itt._2()));
     }
 
     @Override
@@ -1496,10 +1496,10 @@ public abstract class List<T> implements LinearSeq<T> {
             return Tuple.of(empty(), empty());
         } else {
             final Tuple2<List<T>, List<T>> t = SplitAt.splitByPredicateReversed(this, predicate);
-            if (t._2.isEmpty()) {
+            if (t._2().isEmpty()) {
                 return Tuple.of(this, empty());
             } else {
-                return Tuple.of(t._1.reverse(), t._2);
+                return Tuple.of(t._1().reverse(), t._2());
             }
         }
     }
@@ -1510,10 +1510,10 @@ public abstract class List<T> implements LinearSeq<T> {
             return Tuple.of(empty(), empty());
         } else {
             final Tuple2<List<T>, List<T>> t = SplitAt.splitByPredicateReversed(this, predicate);
-            if (t._2.isEmpty() || t._2.tail().isEmpty()) {
+            if (t._2().isEmpty() || t._2().tail().isEmpty()) {
                 return Tuple.of(this, empty());
             } else {
-                return Tuple.of(t._1.prepend(t._2.head()).reverse(), t._2.tail());
+                return Tuple.of(t._1().prepend(t._2().head()).reverse(), t._2().tail());
             }
         }
     }
@@ -1936,7 +1936,7 @@ public abstract class List<T> implements LinearSeq<T> {
                 return List.of(List.empty());
             } else {
                 return elements.zipWithIndex().flatMap(
-                        t -> apply(elements.drop(t._2 + 1), (k - 1)).map(c -> c.prepend(t._1))
+                        t -> apply(elements.drop(t._2() + 1), (k - 1)).map(c -> c.prepend(t._1()))
                 );
             }
         }

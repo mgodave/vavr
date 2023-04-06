@@ -39,58 +39,9 @@ import java.util.function.Function;
  * @param <T5> type of the 5th element
  * @param <T6> type of the 6th element
  */
-public final class Tuple6<T1, T2, T3, T4, T5, T6> implements Tuple, Serializable {
+public record Tuple6<T1, T2, T3, T4, T5, T6>(T1 _1 ,T2 _2 ,T3 _3 ,T4 _4 ,T5 _5 ,T6 _6) implements Tuple, Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    /**
-     * The 1st element of this tuple.
-     */
-    public final T1 _1;
-
-    /**
-     * The 2nd element of this tuple.
-     */
-    public final T2 _2;
-
-    /**
-     * The 3rd element of this tuple.
-     */
-    public final T3 _3;
-
-    /**
-     * The 4th element of this tuple.
-     */
-    public final T4 _4;
-
-    /**
-     * The 5th element of this tuple.
-     */
-    public final T5 _5;
-
-    /**
-     * The 6th element of this tuple.
-     */
-    public final T6 _6;
-
-    /**
-     * Constructs a tuple of 6 elements.
-     *
-     * @param t1 the 1st element
-     * @param t2 the 2nd element
-     * @param t3 the 3rd element
-     * @param t4 the 4th element
-     * @param t5 the 5th element
-     * @param t6 the 6th element
-     */
-    public Tuple6(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6) {
-        this._1 = t1;
-        this._2 = t2;
-        this._3 = t3;
-        this._4 = t4;
-        this._5 = t5;
-        this._6 = t6;
-    }
 
     public static <T1, T2, T3, T4, T5, T6> Comparator<Tuple6<T1, T2, T3, T4, T5, T6>> comparator(Comparator<? super T1> t1Comp, Comparator<? super T2> t2Comp, Comparator<? super T3> t3Comp, Comparator<? super T4> t4Comp, Comparator<? super T5> t5Comp, Comparator<? super T6> t6Comp) {
         return (Comparator<Tuple6<T1, T2, T3, T4, T5, T6>> & Serializable) (t1, t2) -> {
@@ -174,15 +125,6 @@ public final class Tuple6<T1, T2, T3, T4, T5, T6> implements Tuple, Serializable
     }
 
     /**
-     * Getter of the 1st element of this tuple.
-     *
-     * @return the 1st element of this Tuple.
-     */
-    public T1 _1() {
-        return _1;
-    }
-
-    /**
      * Sets the 1st element of this tuple to the given {@code value}.
      *
      * @param value the new value
@@ -199,15 +141,6 @@ public final class Tuple6<T1, T2, T3, T4, T5, T6> implements Tuple, Serializable
      */
     public Tuple5<T2, T3, T4, T5, T6> remove1() {
         return Tuple.of(_2, _3, _4, _5, _6);
-    }
-
-    /**
-     * Getter of the 2nd element of this tuple.
-     *
-     * @return the 2nd element of this Tuple.
-     */
-    public T2 _2() {
-        return _2;
     }
 
     /**
@@ -230,15 +163,6 @@ public final class Tuple6<T1, T2, T3, T4, T5, T6> implements Tuple, Serializable
     }
 
     /**
-     * Getter of the 3rd element of this tuple.
-     *
-     * @return the 3rd element of this Tuple.
-     */
-    public T3 _3() {
-        return _3;
-    }
-
-    /**
      * Sets the 3rd element of this tuple to the given {@code value}.
      *
      * @param value the new value
@@ -255,15 +179,6 @@ public final class Tuple6<T1, T2, T3, T4, T5, T6> implements Tuple, Serializable
      */
     public Tuple5<T1, T2, T4, T5, T6> remove3() {
         return Tuple.of(_1, _2, _4, _5, _6);
-    }
-
-    /**
-     * Getter of the 4th element of this tuple.
-     *
-     * @return the 4th element of this Tuple.
-     */
-    public T4 _4() {
-        return _4;
     }
 
     /**
@@ -286,15 +201,6 @@ public final class Tuple6<T1, T2, T3, T4, T5, T6> implements Tuple, Serializable
     }
 
     /**
-     * Getter of the 5th element of this tuple.
-     *
-     * @return the 5th element of this Tuple.
-     */
-    public T5 _5() {
-        return _5;
-    }
-
-    /**
      * Sets the 5th element of this tuple to the given {@code value}.
      *
      * @param value the new value
@@ -311,15 +217,6 @@ public final class Tuple6<T1, T2, T3, T4, T5, T6> implements Tuple, Serializable
      */
     public Tuple5<T1, T2, T3, T4, T6> remove5() {
         return Tuple.of(_1, _2, _3, _4, _6);
-    }
-
-    /**
-     * Getter of the 6th element of this tuple.
-     *
-     * @return the 6th element of this Tuple.
-     */
-    public T6 _6() {
-        return _6;
     }
 
     /**
@@ -515,7 +412,7 @@ public final class Tuple6<T1, T2, T3, T4, T5, T6> implements Tuple, Serializable
      */
     public <T7> Tuple7<T1, T2, T3, T4, T5, T6, T7> concat(Tuple1<T7> tuple) {
         Objects.requireNonNull(tuple, "tuple is null");
-        return Tuple.of(_1, _2, _3, _4, _5, _6, tuple._1);
+        return Tuple.of(_1, _2, _3, _4, _5, _6, tuple._1());
     }
 
     /**
@@ -529,7 +426,7 @@ public final class Tuple6<T1, T2, T3, T4, T5, T6> implements Tuple, Serializable
      */
     public <T7, T8> Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> concat(Tuple2<T7, T8> tuple) {
         Objects.requireNonNull(tuple, "tuple is null");
-        return Tuple.of(_1, _2, _3, _4, _5, _6, tuple._1, tuple._2);
+        return Tuple.of(_1, _2, _3, _4, _5, _6, tuple._1(), tuple._2());
     }
 
     // -- Object
@@ -553,7 +450,7 @@ public final class Tuple6<T1, T2, T3, T4, T5, T6> implements Tuple, Serializable
 
     @Override
     public int hashCode() {
-        return Objects.hash(_1, _2, _3, _4, _5, _6);
+        return Objects.hash(_1(), _2(), _3(), _4(), _5(), _6());
     }
 
     @Override

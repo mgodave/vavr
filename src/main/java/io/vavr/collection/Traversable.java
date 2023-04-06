@@ -177,7 +177,7 @@ public interface Traversable<T> extends Iterable<T>, Foldable<T>, io.vavr.Value<
      */
     default <K> Option<Map<K, T>> arrangeBy(Function<? super T, ? extends K> getKey) {
         return Option.of(groupBy(getKey).mapValues(Traversable<T>::singleOption))
-                .filter(map -> !map.exists(kv -> kv._2.isEmpty()))
+                .filter(map -> !map.exists(kv -> kv._2().isEmpty()))
                 .map(map -> Map.narrow(map.mapValues(Option::get)));
     }
 

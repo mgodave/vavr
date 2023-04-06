@@ -103,7 +103,7 @@ public class CollectionsTest {
 
         Map<String, Seq<Integer>> m = input.toMap(
                 Tuple2::_1,
-                t -> Vector.of(t._2),
+                t -> Vector.of(t._2()),
                 Seq::appendAll);
 
         assertThat(m.toVector()).isEmpty();
@@ -116,7 +116,7 @@ public class CollectionsTest {
 
         Map<String, Seq<Integer>> m = input.toMap(
                 Tuple2::_1,
-                t -> Vector.of(t._2),
+                t -> Vector.of(t._2()),
                 Seq::appendAll);
 
         assertThat(m.containsKey("a")).isTrue();

@@ -799,7 +799,7 @@ public final class HashSet<T> implements Set<T>, Serializable {
     public Tuple2<HashSet<T>, HashSet<T>> span(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate, "predicate is null");
         final Tuple2<Iterator<T>, Iterator<T>> t = iterator().span(predicate);
-        return Tuple.of(HashSet.ofAll(t._1), HashSet.ofAll(t._2));
+        return Tuple.of(HashSet.ofAll(t._1()), HashSet.ofAll(t._2()));
     }
 
     @Override
@@ -1011,7 +1011,7 @@ public final class HashSet<T> implements Set<T>, Serializable {
             s.defaultWriteObject();
             s.writeInt(tree.size());
             for (Tuple2<T, T> e : tree) {
-                s.writeObject(e._1);
+                s.writeObject(e._1());
             }
         }
 

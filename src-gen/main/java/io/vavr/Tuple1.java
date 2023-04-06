@@ -34,23 +34,9 @@ import java.util.function.Function;
  *
  * @param <T1> type of the 1st element
  */
-public final class Tuple1<T1> implements Tuple, Serializable {
+public record Tuple1<T1>(T1 _1) implements Tuple, Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    /**
-     * The 1st element of this tuple.
-     */
-    public final T1 _1;
-
-    /**
-     * Constructs a tuple of one element.
-     *
-     * @param t1 the 1st element
-     */
-    public Tuple1(T1 t1) {
-        this._1 = t1;
-    }
 
     public static <T1> Comparator<Tuple1<T1>> comparator(Comparator<? super T1> t1Comp) {
         return (Comparator<Tuple1<T1>> & Serializable) (t1, t2) -> {
@@ -81,15 +67,6 @@ public final class Tuple1<T1> implements Tuple, Serializable {
     @Override
     public int arity() {
         return 1;
-    }
-
-    /**
-     * Getter of the 1st element of this tuple.
-     *
-     * @return the 1st element of this Tuple.
-     */
-    public T1 _1() {
-        return _1;
     }
 
     /**
@@ -174,7 +151,7 @@ public final class Tuple1<T1> implements Tuple, Serializable {
      */
     public <T2> Tuple2<T1, T2> concat(Tuple1<T2> tuple) {
         Objects.requireNonNull(tuple, "tuple is null");
-        return Tuple.of(_1, tuple._1);
+        return Tuple.of(_1, tuple._1());
     }
 
     /**
@@ -188,7 +165,7 @@ public final class Tuple1<T1> implements Tuple, Serializable {
      */
     public <T2, T3> Tuple3<T1, T2, T3> concat(Tuple2<T2, T3> tuple) {
         Objects.requireNonNull(tuple, "tuple is null");
-        return Tuple.of(_1, tuple._1, tuple._2);
+        return Tuple.of(_1, tuple._1(), tuple._2());
     }
 
     /**
@@ -203,7 +180,7 @@ public final class Tuple1<T1> implements Tuple, Serializable {
      */
     public <T2, T3, T4> Tuple4<T1, T2, T3, T4> concat(Tuple3<T2, T3, T4> tuple) {
         Objects.requireNonNull(tuple, "tuple is null");
-        return Tuple.of(_1, tuple._1, tuple._2, tuple._3);
+        return Tuple.of(_1, tuple._1(), tuple._2(), tuple._3());
     }
 
     /**
@@ -219,7 +196,7 @@ public final class Tuple1<T1> implements Tuple, Serializable {
      */
     public <T2, T3, T4, T5> Tuple5<T1, T2, T3, T4, T5> concat(Tuple4<T2, T3, T4, T5> tuple) {
         Objects.requireNonNull(tuple, "tuple is null");
-        return Tuple.of(_1, tuple._1, tuple._2, tuple._3, tuple._4);
+        return Tuple.of(_1, tuple._1(), tuple._2(), tuple._3(), tuple._4());
     }
 
     /**
@@ -236,7 +213,7 @@ public final class Tuple1<T1> implements Tuple, Serializable {
      */
     public <T2, T3, T4, T5, T6> Tuple6<T1, T2, T3, T4, T5, T6> concat(Tuple5<T2, T3, T4, T5, T6> tuple) {
         Objects.requireNonNull(tuple, "tuple is null");
-        return Tuple.of(_1, tuple._1, tuple._2, tuple._3, tuple._4, tuple._5);
+        return Tuple.of(_1, tuple._1(), tuple._2(), tuple._3(), tuple._4(), tuple._5());
     }
 
     /**
@@ -254,7 +231,7 @@ public final class Tuple1<T1> implements Tuple, Serializable {
      */
     public <T2, T3, T4, T5, T6, T7> Tuple7<T1, T2, T3, T4, T5, T6, T7> concat(Tuple6<T2, T3, T4, T5, T6, T7> tuple) {
         Objects.requireNonNull(tuple, "tuple is null");
-        return Tuple.of(_1, tuple._1, tuple._2, tuple._3, tuple._4, tuple._5, tuple._6);
+        return Tuple.of(_1, tuple._1(), tuple._2(), tuple._3(), tuple._4(), tuple._5(), tuple._6());
     }
 
     /**
@@ -273,7 +250,7 @@ public final class Tuple1<T1> implements Tuple, Serializable {
      */
     public <T2, T3, T4, T5, T6, T7, T8> Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> concat(Tuple7<T2, T3, T4, T5, T6, T7, T8> tuple) {
         Objects.requireNonNull(tuple, "tuple is null");
-        return Tuple.of(_1, tuple._1, tuple._2, tuple._3, tuple._4, tuple._5, tuple._6, tuple._7);
+        return Tuple.of(_1, tuple._1(), tuple._2(), tuple._3(), tuple._4(), tuple._5(), tuple._6(), tuple._7());
     }
 
     // -- Object

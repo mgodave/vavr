@@ -105,7 +105,7 @@ public abstract class AbstractMultimapTest extends AbstractTraversableTest {
                 final ArrayList<Tuple2<Integer, T>> result = new ArrayList<>();
                 Stream.ofAll(list)
                         .zipWithIndex()
-                        .map(tu -> Tuple.of(tu._2, tu._1))
+                        .map(tu -> Tuple.of(tu._2(), tu._1()))
                         .forEach(result::add);
                 return result;
             }
@@ -113,7 +113,7 @@ public abstract class AbstractMultimapTest extends AbstractTraversableTest {
             private ArrayList<T> fromTuples(java.util.List<Tuple2<Integer, T>> list) {
                 final ArrayList<T> result = new ArrayList<>();
                 Stream.ofAll(list)
-                        .map(tu -> tu._2)
+                        .map(Tuple2::_2)
                         .forEach(result::add);
                 return result;
             }
@@ -540,7 +540,7 @@ public abstract class AbstractMultimapTest extends AbstractTraversableTest {
     public void forEachByTuple() {
         final Multimap<Integer, Integer> map = mapOf(1, 2).put(3, 4);
         final int[] result = { 0 };
-        map.forEach(t -> result[0] += t._1 + t._2);
+        map.forEach(t -> result[0] += t._1() + t._2());
         assertThat(result[0]).isEqualTo(10);
     }
 
@@ -790,8 +790,8 @@ public abstract class AbstractMultimapTest extends AbstractTraversableTest {
             count.incrementAndGet();
             return true;
         });
-        assertThat(results._1).isEqualTo(mapOfTuples(Tuple.of("1", 1), Tuple.of("2", 2), Tuple.of("3", 3)));
-        assertThat(results._2).isEmpty();
+        assertThat(results._1()).isEqualTo(mapOfTuples(Tuple.of("1", 1), Tuple.of("2", 2), Tuple.of("3", 3)));
+        assertThat(results._2()).isEmpty();
         assertThat(count.get()).isEqualTo(3);
     }
 

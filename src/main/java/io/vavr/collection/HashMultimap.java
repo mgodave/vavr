@@ -91,7 +91,7 @@ public final class HashMultimap<K, V> extends AbstractMultimap<K, V, HashMultima
             Objects.requireNonNull(entries, "entries is null");
             HashMultimap<K, V2> result = empty();
             for (Tuple2<? extends K, ? extends V2> entry : entries) {
-                result = result.put(entry._1, entry._2);
+                result = result.put(entry._1(), entry._2());
             }
             return result;
         }
@@ -109,7 +109,7 @@ public final class HashMultimap<K, V> extends AbstractMultimap<K, V, HashMultima
             Objects.requireNonNull(entries, "entries is null");
             HashMultimap<K, V2> result = empty();
             for (Tuple2<? extends K, ? extends V2> entry : entries) {
-                result = result.put(entry._1, entry._2);
+                result = result.put(entry._1(), entry._2());
             }
             return result;
         }
@@ -455,7 +455,7 @@ public final class HashMultimap<K, V> extends AbstractMultimap<K, V, HashMultima
          */
         public <K, V2 extends V> HashMultimap<K, V2> of(Tuple2<? extends K, ? extends V2> entry) {
             final HashMultimap<K, V2> e = empty();
-            return e.put(entry._1, entry._2);
+            return e.put(entry._1(), entry._2());
         }
 
         /**

@@ -208,7 +208,7 @@ public interface Multimap<K, V> extends Traversable<Tuple2<K, V>>, PartialFuncti
 
     @Override
     default boolean contains(Tuple2<K, V> element) {
-        return get(element._1).map(v -> v.contains(element._2)).getOrElse(false);
+        return get(element._1()).map(v -> v.contains(element._2())).getOrElse(false);
     }
 
     /**
@@ -305,7 +305,7 @@ public interface Multimap<K, V> extends Traversable<Tuple2<K, V>>, PartialFuncti
     default void forEach(BiConsumer<K, V> action) {
         Objects.requireNonNull(action, "action is null");
         for (Tuple2<K, V> t : this) {
-            action.accept(t._1, t._2);
+            action.accept(t._1(), t._2());
         }
     }
 
@@ -369,7 +369,7 @@ public interface Multimap<K, V> extends Traversable<Tuple2<K, V>>, PartialFuncti
      */
     default <U> Iterator<U> iterator(BiFunction<K, V, ? extends U> mapper) {
         Objects.requireNonNull(mapper, "mapper is null");
-        return iterator().map(t -> mapper.apply(t._1, t._2));
+        return iterator().map(t -> mapper.apply(t._1(), t._2()));
     }
 
     /**

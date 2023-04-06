@@ -511,7 +511,7 @@ public final class LinkedHashMap<K, V> implements Map<K, V>, Serializable {
     public <K2, V2> LinkedHashMap<K2, V2> bimap(Function<? super K, ? extends K2> keyMapper, Function<? super V, ? extends V2> valueMapper) {
         Objects.requireNonNull(keyMapper, "keyMapper is null");
         Objects.requireNonNull(valueMapper, "valueMapper is null");
-        final Iterator<Tuple2<K2, V2>> entries = iterator().map(entry -> Tuple.of(keyMapper.apply(entry._1), valueMapper.apply(entry._2)));
+        final Iterator<Tuple2<K2, V2>> entries = iterator().map(entry -> Tuple.of(keyMapper.apply(entry._1()), valueMapper.apply(entry._2())));
         return LinkedHashMap.ofEntries(entries);
     }
 
@@ -609,7 +609,7 @@ public final class LinkedHashMap<K, V> implements Map<K, V>, Serializable {
     public <K2, V2> LinkedHashMap<K2, V2> flatMap(BiFunction<? super K, ? super V, ? extends Iterable<Tuple2<K2, V2>>> mapper) {
         Objects.requireNonNull(mapper, "mapper is null");
         return foldLeft(LinkedHashMap.<K2, V2> empty(), (acc, entry) -> {
-            for (Tuple2<? extends K2, ? extends V2> mappedEntry : mapper.apply(entry._1, entry._2)) {
+            for (Tuple2<? extends K2, ? extends V2> mappedEntry : mapper.apply(entry._1(), entry._2())) {
                 acc = acc.put(mappedEntry);
             }
             return acc;
@@ -798,7 +798,7 @@ public final class LinkedHashMap<K, V> implements Map<K, V>, Serializable {
     @Override
     public LinkedHashMap<K, V> remove(K key) {
         if (containsKey(key)) {
-            final Queue<Tuple2<K, V>> newList = list.removeFirst(t -> Objects.equals(t._1, key));
+            final Queue<Tuple2<K, V>> newList = list.removeFirst(t -> Objects.equals(t._1(), key));
             final HashMap<K, V> newMap = map.remove(key);
             return wrap(newList, newMap);
         } else {
@@ -810,8 +810,8 @@ public final class LinkedHashMap<K, V> implements Map<K, V>, Serializable {
     public LinkedHashMap<K, V> removeAll(Iterable<? extends K> keys) {
         Objects.requireNonNull(keys, "keys is null");
         final HashSet<K> toRemove = HashSet.ofAll(keys);
-        final Queue<Tuple2<K, V>> newList = list.filter(t -> !toRemove.contains(t._1));
-        final HashMap<K, V> newMap = map.filter(t -> !toRemove.contains(t._1));
+        final Queue<Tuple2<K, V>> newList = list.filter(t -> !toRemove.contains(t._1()));
+        final HashMap<K, V> newMap = map.filter(t -> !toRemove.contains(t._1()));
         return newList.size() == size() ? this : wrap(newList, newMap);
     }
 
@@ -826,8 +826,8 @@ public final class LinkedHashMap<K, V> implements Map<K, V>, Serializable {
             Queue<Tuple2<K, V>> newList = list;
             HashMap<K, V> newMap = map;
 
-            final K currentKey = currentElement._1;
-            final K newKey = newElement._1;
+            final K currentKey = currentElement._1();
+            final K newKey = newElement._1();
 
             // If current key and new key are equal, the element will be automatically replaced,
             // otherwise we need to remove the pair (newKey, ?) from the list manually.
@@ -874,7 +874,7 @@ public final class LinkedHashMap<K, V> implements Map<K, V>, Serializable {
         LinkedHashMap<K, V> result = empty();
         for (Tuple2<K, V> entry : elements) {
             if (contains(entry)) {
-                result = result.put(entry._1, entry._2);
+                result = result.put(entry._1(), entry._2());
             }
         }
         return result;
@@ -953,7 +953,7 @@ public final class LinkedHashMap<K, V> implements Map<K, V>, Serializable {
 
     @Override
     public Seq<V> values() {
-        return map(t -> t._2);
+        return map(Tuple2::_2);
     }
 
     @Override

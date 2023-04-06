@@ -21,6 +21,7 @@ package io.vavr.collection.euler;
 import io.vavr.API;
 import io.vavr.Function1;
 import io.vavr.Tuple;
+import io.vavr.Tuple2;
 import io.vavr.collection.Iterator;
 import io.vavr.collection.Stream;
 
@@ -42,7 +43,7 @@ final class Utils {
     static final Function1<Long, Boolean> MEMOIZED_IS_PRIME = Function1.of(Utils::isPrime).memoized();
 
     static Stream<BigInteger> fibonacci() {
-        return Stream.of(BigInteger.ZERO, BigInteger.ONE).appendSelf(self -> self.zip(self.tail()).map(t -> t._1.add(t._2)));
+        return Stream.of(BigInteger.ZERO, BigInteger.ONE).appendSelf(self -> self.zip(self.tail()).map(t -> t._1().add(t._2())));
     }
 
     static BigInteger factorial(int n) {
@@ -119,8 +120,8 @@ final class Utils {
     static Stream<Long> pentagonal() {
         return Stream.of(Tuple.of(1L, 1)).appendSelf(self ->
                 self.map(t ->
-                        Tuple.of((t._2 + 1) * (3L * (t._2 + 1) - 1) / 2, t._2 + 1)))
-                .map(t -> t._1);
+                        Tuple.of((t._2() + 1) * (3L * (t._2() + 1) - 1) / 2, t._2() + 1)))
+                .map(Tuple2::_1);
     }
 
     static boolean isPentagonal(long number) {
