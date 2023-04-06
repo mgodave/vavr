@@ -998,8 +998,6 @@ public abstract class AbstractValueTest {
         );
 
         final Predicate<Object> unexpectedTypes = anyOf(
-          instanceOf(Either.LeftProjection.class),
-          instanceOf(Either.RightProjection.class),
           instanceOf(Future.class),
           instanceOf(io.vavr.collection.Iterator.class)
         );
