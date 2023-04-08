@@ -88,7 +88,8 @@ public class CodingConventions {
                     )
                             .map(Object::toString)
                             .map(path -> path.substring(startDir.length() + 1, path.length() - fileExtension.length()))
-                            .filter(path -> !path.endsWith(File.separator + "package-info"))
+                            .filter(path -> !path.endsWith("package-info"))
+                            .filter(path -> !path.endsWith("module-info"))
                             .map(path -> path.replace(File.separator, "."))
                             .collect(List.collector());
                 }).unchecked())
