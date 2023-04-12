@@ -545,40 +545,6 @@ def generateMainClasses(): Unit = {
               return Lazy.of(supplier);
           }
 
-          // -- Option
-
-          /$javadoc
-           * Alias for {@link $OptionType#of(Object)}
-           *
-           * @param <T>   type of the value
-           * @param value A value
-           * @return {@link $OptionType.Some} if value is not {@code null}, {@link $OptionType.None} otherwise
-           */
-          public static <T> $OptionType<T> Option(T value) {
-              return $OptionType.of(value);
-          }
-
-          /$javadoc
-           * Alias for {@link $OptionType#some(Object)}
-           *
-           * @param <T>   type of the value
-           * @param value A value
-           * @return {@link $OptionType}
-           */
-          public static <T> $OptionType<T> Some(T value) {
-              return $OptionType.some(value);
-          }
-
-          /$javadoc
-           * Alias for {@link $OptionType#none()}
-           *
-           * @param <T> component type
-           * @return the singleton instance of {@link $OptionType}
-           */
-          public static <T> $OptionType<T> None() {
-              return $OptionType.none();
-          }
-
           // -- Try
 
           /$javadoc
