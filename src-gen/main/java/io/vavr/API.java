@@ -873,6 +873,42 @@ public final class API {
         return Lazy.of(supplier);
     }
 
+    // -- Try
+
+    /**
+     * Alias for {@link Try#of(CheckedFunction0)}
+     *
+     * @param <T>      Component type
+     * @param supplier A checked supplier
+     * @return {@link Try.Success} if no exception occurs, otherwise {@link Try.Failure} if an
+     * exception occurs calling {@code supplier.get()}.
+     */
+    public static <T> Try<T> Try(CheckedFunction0<? extends T> supplier) {
+        return Try.of(supplier);
+    }
+
+    /**
+     * Alias for {@link Try#success(Object)}
+     *
+     * @param <T>   Type of the given {@code value}.
+     * @param value A value.
+     * @return A new {@link Try}.
+     */
+    public static <T> Try<T> Success(T value) {
+        return Try.success(value);
+    }
+
+    /**
+     * Alias for {@link Try#failure(Throwable)}
+     *
+     * @param <T>       Component type of the {@code Try}.
+     * @param exception An exception.
+     * @return A new {@link Try}.
+     */
+    public static <T> Try<T> Failure(Throwable exception) {
+        return Try.failure(exception);
+    }
+
     // -- Validation
 
     /**

@@ -33,7 +33,6 @@ import java.util.function.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collector;
 
-import static io.vavr.API.Some;
 import static io.vavr.Serializables.deserialize;
 import static io.vavr.Serializables.serialize;
 import static java.util.Arrays.asList;
@@ -1331,25 +1330,25 @@ public abstract class AbstractMapTest extends AbstractTraversableTest {
     @Test
     public void shouldGetValueOfNullKeyWhenPutFirstHavingTwoEntries() {
         final Map<Integer, String> map = mapOfNullKey(null, "a", 2, "b");
-        assertThat(map.get(null)).isEqualTo(Some("a"));
+        assertThat(map.get(null)).isEqualTo(Option.some("a"));
     }
 
     @Test
     public void shouldGetValueOfNullKeyWhenPutLastHavingTwoEntries() {
         final Map<Integer, String> map = mapOfNullKey(1, "a", null, "b");
-        assertThat(map.get(null)).isEqualTo(Some("b"));
+        assertThat(map.get(null)).isEqualTo(Option.some("b"));
     }
 
     @Test
     public void shouldGetAPresentNullValueWhenPutFirstHavingTwoEntries() {
         final Map<Integer, String> map = mapOf(1, null, 2, "b");
-        assertThat(map.get(1)).isEqualTo(Some(null));
+        assertThat(map.get(1)).isEqualTo(Option.some(null));
     }
 
     @Test
     public void shouldGetAPresentNullValueWhenPutLastHavingTwoEntries() {
         final Map<Integer, String> map = mapOf(1, "a", 2, null);
-        assertThat(map.get(2)).isEqualTo(Some(null));
+        assertThat(map.get(2)).isEqualTo(Option.some(null));
     }
 
     // -- getOrElse

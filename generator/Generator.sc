@@ -2318,12 +2318,6 @@ def generateTestClasses(): Unit = {
 
           ${genSimpleAliasTest("Lazy", "() -> 1")}
 
-          ${genSimpleAliasTest("Option", "1")}
-
-          ${genSimpleAliasTest("Some", "1")}
-
-          ${genSimpleAliasTest("None", "")}
-
           ${genTryTests("Try", "() -> 1", success = true)}
 
           ${genTryTests("Success", "1", success = true)}

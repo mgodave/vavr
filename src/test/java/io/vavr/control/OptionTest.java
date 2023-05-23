@@ -20,6 +20,7 @@ package io.vavr.control;
 
 import io.vavr.*;
 import io.vavr.collection.Seq;
+import io.vavr.control.Option.Some;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -137,7 +138,7 @@ public class OptionTest extends AbstractValueTest {
     public void shouldConvertListOfNonEmptyOptionsToOptionOfList() {
         final List<Option<String>> options = Arrays.asList(Option.of("a"), Option.of("b"), Option.of("c"));
         final Option<Seq<String>> reducedOption = Option.sequence(options);
-        assertThat(reducedOption instanceof Option.Some).isTrue();
+        assertThat(reducedOption instanceof Some).isTrue();
         assertThat(reducedOption.get().size()).isEqualTo(3);
         assertThat(reducedOption.get().mkString()).isEqualTo("abc");
     }
@@ -470,34 +471,34 @@ public class OptionTest extends AbstractValueTest {
 
     @Test
     public void shouldMakeRightOnSomeToEither() {
-        assertThat(API.Some(5).toEither("bad")).isEqualTo(API.Right(5));
+        assertThat(Option.some(5).toEither("bad")).isEqualTo(API.Right(5));
     }
 
     @Test
     public void shouldMakeLeftOnNoneToEither() {
-        assertThat(API.None().toEither("bad")).isEqualTo(API.Left("bad"));
+        assertThat(Option.none().toEither("bad")).isEqualTo(API.Left("bad"));
     }
 
     @Test
     public void shouldMakeLeftOnNoneToEitherSupplier() {
-        assertThat(API.None().toEither(() -> "bad")).isEqualTo(API.Left("bad"));
+        assertThat(Option.none().toEither(() -> "bad")).isEqualTo(API.Left("bad"));
     }
 
     // -- toValidation
 
     @Test
     public void shouldMakeValidOnSomeToValidation() {
-        assertThat(API.Some(5).toValidation("bad")).isEqualTo(API.Valid(5));
+        assertThat(Option.some(5).toValidation("bad")).isEqualTo(API.Valid(5));
     }
 
     @Test
     public void shouldMakeLeftOnNoneToValidation() {
-        assertThat(API.None().toValidation("bad")).isEqualTo(API.Invalid("bad"));
+        assertThat(Option.none().toValidation("bad")).isEqualTo(API.Invalid("bad"));
     }
 
     @Test
     public void shouldMakeLeftOnNoneToValidationSupplier() {
-        assertThat(API.None().toValidation(() -> "bad")).isEqualTo(API.Invalid("bad"));
+        assertThat(Option.none().toValidation(() -> "bad")).isEqualTo(API.Invalid("bad"));
     }
 
     // -- peek
@@ -664,7 +665,7 @@ public class OptionTest extends AbstractValueTest {
     @Test
     public void shouldConvertSomeToCompletableFuture() {
         final String some = "some";
-        final CompletableFuture<String> future = API.Option(some).toCompletableFuture();
+        final CompletableFuture<String> future = Option.of(some).toCompletableFuture();
         assertThat(future.isDone());
         assertThat(Try.of(future::get).get()).isEqualTo(some);
     }
@@ -672,7 +673,7 @@ public class OptionTest extends AbstractValueTest {
     @Test
     public void shouldConvertNoneToFailedCompletableFuture() {
 
-        final CompletableFuture<Object> future = API.None().toCompletableFuture();
+        final CompletableFuture<Object> future = Option.none().toCompletableFuture();
         assertThat(future.isDone());
         assertThat(future.isCompletedExceptionally());
     }

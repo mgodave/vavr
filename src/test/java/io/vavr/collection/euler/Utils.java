@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigInteger;
 import java.net.URL;
+import java.text.StringCharacterIterator;
 import java.util.Scanner;
 
 final class Utils {
@@ -72,7 +73,7 @@ final class Utils {
 
     static Stream<String> readLines(File file) {
         try {
-            return Stream.ofAll(new Iterator<String>() {
+            return Stream.ofAll(new Iterator<>() {
 
                 final Scanner scanner = new Scanner(file);
 

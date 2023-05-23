@@ -325,21 +325,6 @@ public class APITest {
     }
 
     @Test
-    public void shouldOptionReturnNotNull() {
-        assertThat(Option(1)).isNotNull();
-    }
-
-    @Test
-    public void shouldSomeReturnNotNull() {
-        assertThat(Some(1)).isNotNull();
-    }
-
-    @Test
-    public void shouldNoneReturnNotNull() {
-        assertThat(None()).isNotNull();
-    }
-
-    @Test
     public void shouldTryReturnNotNull() {
         final Try<?> t = Try(() -> 1);
         assertThat(t).isNotNull();
